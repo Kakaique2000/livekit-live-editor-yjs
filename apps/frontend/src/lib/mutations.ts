@@ -4,9 +4,9 @@ import { apiClient } from "./api";
 export const useLivekitToken = () => {
     return useMutation({
         mutationKey: ['auth'],
-        mutationFn: async () => {
+        mutationFn: async (identity: string) => {
             const res = await apiClient.auth.post({
-                identity: "test",
+                identity,
 
             });
             if (res.error) {

@@ -1,3 +1,6 @@
+import { SyncedBasicEditor } from '@/components/live/SyncedBasicText';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useLivekitToken } from '@/lib/mutations';
 import { LiveKitRoom } from '@livekit/components-react';
 import { createFileRoute } from '@tanstack/react-router';
@@ -22,19 +25,23 @@ function App() {
   if (isPending) return <div>Loading...</div>;
   if (!data) {
     return (
-      <div>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-        <button onClick={() => getLivekitToken()}>Get Livekit Token</button>
+      <form onSubmit={(e) => { e.preventDefault(); getLivekitToken(name) }} className="flex flex-col gap-2 border px-4 py-2 rounded-md w-sm mx-auto mt-10">
+        <label htmlFor="name">Insert your name</label>
+        <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        <Button onClick={() => getLivekitToken(name)}>Get Livekit Token</Button>
         {isError && <div>Error: {error.message}</div>}
-      </div>
+      </form>
     )
   }
 
+
   return (
     <div>
-      Livekit room:
+
       <LiveKitRoom audio={true} video={true} token={data.token} serverUrl={serverUrl}>
+        <SyncedBasicEditor />
       </LiveKitRoom>
+
     </div>
   )
 }
