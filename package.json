@@ -2,9 +2,14 @@
   "name": "test-yjs",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run dev.ts",
+    "dev:back": "bun --filter backend dev",
+    "dev:front": "bun --filter frontend dev",
+    "dev:livekit": "livekit-server --dev"
+  },
   "private": true,
   "workspaces": [
-    "packages/*",
     "apps/*"
   ],
   "devDependencies": {
