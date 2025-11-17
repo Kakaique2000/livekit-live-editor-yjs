@@ -1,5 +1,4 @@
 import { useLivekitAwareness, useLivekitYJSDoc } from "@/integrations/LivekitYJSProvider/LivekitYJSProvider";
-import { useParticipants } from "@livekit/components-react";
 import { Editor } from "@monaco-editor/react";
 import * as monaco from 'monaco-editor';
 import { useEffect, useRef } from "react";
@@ -13,7 +12,6 @@ const text = doc.getText("index-text");
 
 export const SyncedBasicEditor = () => {
 
-    const participants = useParticipants();
 
     useLivekitYJSDoc(doc, "synced-basic-text");
     useLivekitAwareness(awareness, "synced-basic-awareness");
@@ -33,11 +31,6 @@ export const SyncedBasicEditor = () => {
 
     return (
         <div>
-            <div>
-                {participants.map((participant) => (
-                    <div key={participant.identity}>{participant.identity}</div>
-                ))}
-            </div>
             <Editor
                 onMount={handleEditorDidMount}
                 height="100vh"

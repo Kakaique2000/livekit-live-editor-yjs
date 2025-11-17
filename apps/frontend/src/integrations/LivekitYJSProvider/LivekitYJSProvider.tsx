@@ -1,7 +1,7 @@
 import { useRoomContext } from "@livekit/components-react";
 import * as decoding from "lib0/decoding";
 import * as encoding from "lib0/encoding";
-import { DataPacket_Kind, RemoteParticipant, RoomEvent } from "livekit-client";
+import { ConnectionState, DataPacket_Kind, RemoteParticipant, RoomEvent } from "livekit-client";
 import { applyAwarenessUpdate, Awareness, encodeAwarenessUpdate, removeAwarenessStates } from "y-protocols/awareness";
 import {
     readSyncMessage,
@@ -107,10 +107,13 @@ export function useLivekitAwareness(
 
             const update = encodeAwarenessUpdate(awareness, changed);
 
-            void room.localParticipant.publishData(update, {
-                reliable: false,
-                topic,
-            });
+            if (room.state === ConnectionState.Connected) {
+                void room.localParticipant.publishData(update, {
+                    reliable: false,
+                    topic,
+                });
+            }
+
         };
 
         const onRemoteAwarenessUpdate = (

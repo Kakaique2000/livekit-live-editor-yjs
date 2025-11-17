@@ -9,38 +9,73 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RoomRouteRouteImport } from './routes/room/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RoomWhiteboardRouteImport } from './routes/room/whiteboard'
+import { Route as RoomEditorRouteImport } from './routes/room/editor'
 
+const RoomRouteRoute = RoomRouteRouteImport.update({
+  id: '/room',
+  path: '/room',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoomWhiteboardRoute = RoomWhiteboardRouteImport.update({
+  id: '/whiteboard',
+  path: '/whiteboard',
+  getParentRoute: () => RoomRouteRoute,
+} as any)
+const RoomEditorRoute = RoomEditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => RoomRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/room': typeof RoomRouteRouteWithChildren
+  '/room/editor': typeof RoomEditorRoute
+  '/room/whiteboard': typeof RoomWhiteboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/room': typeof RoomRouteRouteWithChildren
+  '/room/editor': typeof RoomEditorRoute
+  '/room/whiteboard': typeof RoomWhiteboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/room': typeof RoomRouteRouteWithChildren
+  '/room/editor': typeof RoomEditorRoute
+  '/room/whiteboard': typeof RoomWhiteboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/room' | '/room/editor' | '/room/whiteboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/room' | '/room/editor' | '/room/whiteboard'
+  id: '__root__' | '/' | '/room' | '/room/editor' | '/room/whiteboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  RoomRouteRoute: typeof RoomRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/room': {
+      id: '/room'
+      path: '/room'
+      fullPath: '/room'
+      preLoaderRoute: typeof RoomRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +83,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/room/whiteboard': {
+      id: '/room/whiteboard'
+      path: '/whiteboard'
+      fullPath: '/room/whiteboard'
+      preLoaderRoute: typeof RoomWhiteboardRouteImport
+      parentRoute: typeof RoomRouteRoute
+    }
+    '/room/editor': {
+      id: '/room/editor'
+      path: '/editor'
+      fullPath: '/room/editor'
+      preLoaderRoute: typeof RoomEditorRouteImport
+      parentRoute: typeof RoomRouteRoute
+    }
   }
 }
 
+interface RoomRouteRouteChildren {
+  RoomEditorRoute: typeof RoomEditorRoute
+  RoomWhiteboardRoute: typeof RoomWhiteboardRoute
+}
+
+const RoomRouteRouteChildren: RoomRouteRouteChildren = {
+  RoomEditorRoute: RoomEditorRoute,
+  RoomWhiteboardRoute: RoomWhiteboardRoute,
+}
+
+const RoomRouteRouteWithChildren = RoomRouteRoute._addFileChildren(
+  RoomRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  RoomRouteRoute: RoomRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
